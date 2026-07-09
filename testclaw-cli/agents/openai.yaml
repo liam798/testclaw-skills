@@ -1,0 +1,5 @@
+interface:
+  display_name: "Using TestClaw"
+  short_description: "使用 testclaw-cli 完成 TestClaw 设备、应用、套件执行与全量证据采集"
+  brand_color: "#4F46E5"
+  default_prompt: "使用 $testclaw-cli。若是 TestClaw 业务请求，例如查设备、占用设备、安装/打开应用、执行套件、APK 自动化测试或真机验证，优先直接执行 testclaw-cli。所有 case 必须采集全程录屏、全程日志、网络抓包、关键节点截图、性能数据和结构化报告。"
