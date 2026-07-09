@@ -91,9 +91,9 @@ testclaw --json whoami
 | 查询设备 | 查看空闲设备、在线设备、设备状态 | `testclaw --json device list` |
 | 设备占用与调试准备 | 占用设备、准备 Android 调试 | `testclaw --json device prepare-android-debug` |
 | 释放设备 | 释放设备、结束占用 | `testclaw --json device release` |
-| 查看应用 | 看设备装了什么 app | `testclaw --json app list-installed` |
-| 应用安装 | 上传 apk、安装应用 | `testclaw --json package upload`、`testclaw --json app install` |
-| 应用控制 | 打开 app、停止 app、卸载 app | `testclaw --json app open`、`testclaw --json app kill`、`testclaw --json app uninstall` |
+| 查看应用 | 看设备装了什么 app | `testclaw --json app list-installed --device-id <id>` |
+| 应用安装 | 上传 apk | `testclaw --json package upload` |
+| 应用控制 | 打开 app、停止 app、卸载 app | `testclaw --json app open --device-id <id>`、`testclaw --json app kill --device-id <id>`、`testclaw --json app uninstall --device-id <id>` |
 | 创建测试资产 | 创建模块、用例、步骤、套件 | `testclaw --json module create`、`testclaw --json case create`、`testclaw --json step create`、`testclaw --json suite create` |
 | 套件执行与结果 | 执行套件、查看执行结果 | `testclaw --json suite run`、`testclaw --json result get` |
 | 原始接口读取 | CLI 高层命令不覆盖 | `testclaw --json raw request --method GET --path ...` |
@@ -102,6 +102,7 @@ testclaw --json whoami
 
 - 把所有请求都退回“先配置 TestClaw”
 - 直接写裸 `adb` 脚本替代 `testclaw-cli`
+- 在业务设备操作中使用外部用户本机 `adb` 直连手机；默认必须走 TestClaw Server -> Agent
 - 用 web 搜索代替真机验证
 - 只给测试建议，不真正调用 TestClaw CLI 命令
 - 把 evidence workflow 当成可选项

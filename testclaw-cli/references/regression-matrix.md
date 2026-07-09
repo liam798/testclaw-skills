@@ -16,9 +16,9 @@
 | R3 | 用 TestClaw 帮我找一台空闲 Android 设备 | `testclaw-cli` | 设备流 | `testclaw --json device list` |
 | R4 | 占用一台 TestClaw 设备并准备调试 | `testclaw-cli` | 设备流 | `testclaw --json device prepare-android-debug` |
 | R5 | 释放刚才那台 TestClaw 设备 | `testclaw-cli` | 设备流 | `testclaw --json device release` |
-| R6 | 用 TestClaw 看下设备装了哪些 app | `testclaw-cli` | 应用流 | `testclaw --json app list-installed` |
-| R7 | 上传 apk 到 TestClaw 并安装到空闲设备 | `testclaw-cli` | 应用流 | `testclaw --json package upload`、`testclaw --json app install` |
-| R8 | 在 TestClaw 真机上打开应用 | `testclaw-cli` | 应用流 | `testclaw --json app open` |
+| R6 | 用 TestClaw 看下设备装了哪些 app | `testclaw-cli` | 应用流 | `testclaw --json app list-installed --device-id <id>` |
+| R7 | 上传 apk 到 TestClaw | `testclaw-cli` | 应用流 | `testclaw --json package upload` |
+| R8 | 在 TestClaw 真机上打开应用 | `testclaw-cli` | 应用流 | `testclaw --json app open --device-id <id>` |
 | R9 | 用 TestClaw 创建模块、用例和步骤 | `testclaw-cli` | 执行资产流 | 资产类 CLI 命令 |
 | R10 | 帮我在 TestClaw 上执行套件并拉结果 | `testclaw-cli` | 执行流 | `testclaw --json suite run`、`testclaw --json result get` |
 | R11 | 用 TestClaw 空闲设备做 UI 校对 | `testclaw-cli` | UI 校对流 | 设备准备 -> evidence workflow -> 真机检查 -> 释放 |

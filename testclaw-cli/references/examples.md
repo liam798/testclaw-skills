@@ -26,13 +26,13 @@
 ## 应命中：应用类
 
 ```text
-帮我把 apk 上传到 TestClaw 然后安装到空闲设备上。
+帮我把 apk 上传到 TestClaw。
 ```
 
 期望：
 
 - 命中 `testclaw-cli`
-- 优先执行 `testclaw --json package upload` 和 `testclaw --json app install`
+- 优先执行 `testclaw --json package upload`
 
 ## 应命中：执行类
 
