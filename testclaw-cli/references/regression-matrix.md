@@ -37,6 +37,6 @@
 
 每次修改 `testclaw-cli` 后，建议至少执行下面 3 步：
 
-1. `python3 skills/testclaw-cli/scripts/lint_skill_refs.py`
-2. `python3 skills/testclaw-cli/scripts/package_skill.py`
-3. `python3 skills/testclaw-cli/scripts/check_skill_integrity.py`
+1. `python3 testclaw-skills/testclaw-cli/scripts/lint_skill_refs.py`
+2. `python3 testclaw-skills/testclaw-cli/scripts/package_skill.py`
+3. `python3 testclaw-skills/testclaw-cli/scripts/check_skill_integrity.py`

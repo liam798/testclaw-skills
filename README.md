@@ -17,4 +17,4 @@ testclaw-cli/
   scripts/
 ```
 
-The main TestClaw repository references this repository as a Git submodule at `skills/`.
+The main TestClaw repository references this repository as a Git submodule at `testclaw-skills/`.

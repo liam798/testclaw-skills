@@ -42,19 +42,19 @@ testclaw --json whoami
 推荐在更新 skill 内容后同步重打包：
 
 ```bash
-python3 skills/testclaw-cli/scripts/package_skill.py
+python3 testclaw-skills/testclaw-cli/scripts/package_skill.py
 ```
 
 更新 skill 资料后，建议先做引用检查：
 
 ```bash
-python3 skills/testclaw-cli/scripts/lint_skill_refs.py
+python3 testclaw-skills/testclaw-cli/scripts/lint_skill_refs.py
 ```
 
 打包完成后，建议做完整性检查：
 
 ```bash
-python3 skills/testclaw-cli/scripts/check_skill_integrity.py
+python3 testclaw-skills/testclaw-cli/scripts/check_skill_integrity.py
 ```
 
 ## 服务端验证点
