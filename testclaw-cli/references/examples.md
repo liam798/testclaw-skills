@@ -22,6 +22,7 @@
 
 - 命中 `testclaw-cli`
 - 优先执行 `testclaw --json device list`
+- 不自动占用；列出候选后等待用户指定或确认自动选择
 
 ## 应命中：应用类
 
@@ -56,6 +57,7 @@
 
 - 命中 `testclaw-cli`
 - 优先查 suite；无 suite 时进入 testclaw-cli 手工冒烟模式
+- 涉及真机前先列出设备候选，等待用户指定或确认自动选择
 - 必须采集完整 evidence workflow
 
 ## 不应命中

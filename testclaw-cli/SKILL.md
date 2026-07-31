@@ -33,7 +33,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 2. 如果是登录配置类，先确认 TestClaw Server 地址，再配置 `testclaw-cli` 并指导或执行 `testclaw login`。
 3. 如果是业务类，默认直接优先使用 `testclaw-cli` 完成，不要先退回 web、Computer Use 或泛化建议。
 4. 业务执行前先观察当前项目、设备、套件状态，避免盲目创建重复资产。
-5. 涉及设备时，先占用并准备调试，再做安装包、应用、页面或执行操作。
+5. 涉及设备时，先列出候选设备；除非用户已明确指定设备或确认自动选择，否则不得占用、准备调试或执行应用操作。
 6. 涉及自动化测试时，所有 case 都必须遵守统一 evidence workflow。
 7. 执行套件后，轮询结果直到完成、失败或明确阻塞。
 8. 无论成功或失败，结束时都释放设备，或明确说明无法释放的原因。
@@ -49,6 +49,12 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 
 - 先观察，再执行。先查当前项目、设备、套件状态，不要盲目创建重复资产。
 - 设备业务操作必须通过 `testclaw-cli -> TestClaw Server -> TestClaw Agent`，不要让外部用户的 AI Agent 直接连接本机手机。
+- 设备选择与占用保护：
+  - 任何需要真实设备的任务，都必须先执行 `testclaw --json device list`，并把可用候选设备列给用户。
+  - 如果用户没有明确指定 `deviceId`、`udid` 或设备名称，不得执行 `device prepare-android-debug`、`device occupy`、安装、打开、停止、卸载、套件运行、UI 校对、截图、录屏等会接触真实设备的操作。
+  - 用户说“随便找一台”“拿一个空闲机”“找台在线 Android”时，也只先列出候选设备并请求用户指定；只有用户明确授权“自动选择并占用”时，才可以从候选空闲设备中选择。
+  - 优先展示空闲、在线、未占用设备；`DEBUGGING`、`TESTING`、`ERROR`、维护中、离线、已占用、线下使用中的设备不能自动抢占。
+  - 如果设备状态缺少占用人、用途、锁定时间或线下使用信息，必须提示存在抢占风险，并等待用户确认后再继续。
 - `--adb-address` 只允许用于明确的本地动态分析/调试场景；查看应用、打开应用、停止应用、卸载应用等业务命令优先使用 `--device-id` 或 `--udid`。
 - 如果可以复用已有模块、用例、套件，优先复用；只有在用户明确要求新建或需要隔离验证时再创建新的。
 - 只要 `testclaw-cli` 已可用，优先使用 `testclaw` 命令，而不是：
@@ -56,7 +62,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
   - web 搜索替代真机验证
   - 裸 `adb` 脚本
   - 泛化成“给你一份测试建议”
-- 涉及设备时，要明确记录 `deviceId`、占用结果、调试地址和最终释放结果。
+- 涉及设备时，要明确记录候选设备列表、用户指定或授权依据、`deviceId`、占用结果、调试地址和最终释放结果。
 - 涉及执行结果时，要明确记录 `resultId`、最终状态、失败原因。
 - 如果设备处于 `DEBUGGING`、`TESTING`、`ERROR` 等非空闲状态，先判断能否释放，再继续执行。
 - `testclaw login` 的浏览器授权默认应对接 TestClaw Server OAuth。
@@ -78,7 +84,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
   - 优先命令：`testclaw --json device list`
 - 占用设备并准备 Android 调试
   - 典型表达：`占用一台设备`、`准备调试`、`拿一个空闲机`
-  - 优先命令：`testclaw --json device prepare-android-debug`
+  - 优先命令：先执行 `testclaw --json device list`；用户指定设备或明确授权自动选择后，才执行 `testclaw --json device prepare-android-debug --device-id <id>` 或等价指定设备命令。
 - 释放设备
   - 典型表达：`释放设备`、`结束占用`
   - 优先命令：`testclaw --json device release`
@@ -114,7 +120,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 
 1. 确认当前环境是否可直接执行 `testclaw`。
 2. 能执行时优先走 `testclaw-cli`。
-3. 根据用户意图选择对应命令。
+3. 根据用户意图选择对应命令；涉及真实设备时先列候选并等待用户指定或确认。
 4. 自动化测试类任务必须读取 `references/evidence-workflow.md`。
 5. 优先真实执行，不要退化为泛泛说明。
 6. 结束后输出结果、证据和资源释放状态。

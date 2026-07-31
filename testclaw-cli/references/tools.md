@@ -89,7 +89,7 @@ testclaw --json whoami
 | 查询当前用户 | 当前连的是谁、登录用户是谁 | `testclaw --json whoami` |
 | 查询项目 | 查看项目、列出项目 | `testclaw --json project list` |
 | 查询设备 | 查看空闲设备、在线设备、设备状态 | `testclaw --json device list` |
-| 设备占用与调试准备 | 占用设备、准备 Android 调试 | `testclaw --json device prepare-android-debug` |
+| 设备占用与调试准备 | 占用设备、准备 Android 调试、拿一个空闲机 | 先执行 `testclaw --json device list`；用户指定设备或明确授权自动选择后，再执行 `testclaw --json device prepare-android-debug --device-id <id>` 或等价指定设备命令 |
 | 释放设备 | 释放设备、结束占用 | `testclaw --json device release` |
 | 查看应用 | 看设备装了什么 app | `testclaw --json app list-installed --device-id <id>` |
 | 应用安装 | 上传 apk | `testclaw --json package upload` |
@@ -106,3 +106,4 @@ testclaw --json whoami
 - 用 web 搜索代替真机验证
 - 只给测试建议，不真正调用 TestClaw CLI 命令
 - 把 evidence workflow 当成可选项
+- 在用户未指定设备、也未明确授权自动选择时，直接占用或准备调试设备

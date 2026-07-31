@@ -44,17 +44,18 @@ testclaw --json suite create ... --is-open-perfmon 1 --perfmon-interval 1000
 1. `testclaw --json doctor`
 2. 解析 APK 或目标信息
 3. `testclaw --json device list`
-4. `testclaw --json device prepare-android-debug`
-5. 启动录屏
-6. 清空或标记日志起点
-7. 启动网络抓包或代理日志采集
-8. 安装、启动、交互、断言
-9. 每个关键节点截图
-10. 采集性能数据
-11. 停止录屏、日志、抓包
-12. 拉取和归档产物
-13. 释放设备
-14. 生成报告
+4. 列出候选设备，等待用户指定 `deviceId` / `udid` / 设备名称，或明确授权自动选择
+5. `testclaw --json device prepare-android-debug --device-id <id>` 或等价指定设备命令
+6. 启动录屏
+7. 清空或标记日志起点
+8. 启动网络抓包或代理日志采集
+9. 安装、启动、交互、断言
+10. 每个关键节点截图
+11. 采集性能数据
+12. 停止录屏、日志、抓包
+13. 拉取和归档产物
+14. 释放设备
+15. 生成报告
 
 Android 最小命令集合：
 
