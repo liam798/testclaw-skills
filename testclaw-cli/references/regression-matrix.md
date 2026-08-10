@@ -7,6 +7,7 @@
 - 业务请求应优先落到 `testclaw-cli` 命令，而不是 shell、web 或通用建议
 - 所有 case 都必须执行统一 evidence workflow
 - 设备相关请求必须先列出候选设备；用户未指定或未明确授权自动选择时，不得直接占用或准备调试
+- 真实设备浏览器访问网页、截图确认、页面内容总结必须按手工冒烟处理，不能绕过 evidence preflight
 
 ## 验收表
 
@@ -24,16 +25,18 @@
 | R10 | 帮我在 TestClaw 上执行套件并拉结果 | `testclaw-cli` | 执行流 | `testclaw --json suite run`、`testclaw --json result get` |
 | R11 | 用 TestClaw 空闲设备做 UI 校对 | `testclaw-cli` | UI 校对流 | 设备候选 -> 用户指定或确认 -> 设备准备 -> evidence workflow -> 真机检查 -> 释放 |
 | R12 | 使用 TestClaw 自动化测试这个 APK | `testclaw-cli` | APK 测试流 | suite 或手工冒烟 + 设备候选确认 + 完整 evidence workflow |
-| R13 | 帮我写一个 React 表单组件 | 不应优先命中 | 非 TestClaw 技能 | 无 |
+| R13 | 使用这台 TestClaw 设备打开浏览器加载百度，并把返回的内容总结给我 | `testclaw-cli` | 真机浏览器网页巡检流 | 已有设备指定依据 -> evidence preflight -> 打开浏览器/网页 -> 关键截图/日志/网络/性能 -> 结构化报告 -> 释放 |
+| R14 | 帮我写一个 React 表单组件 | 不应优先命中 | 非 TestClaw 技能 | 无 |
 
 ## 通过标准
 
-- R1-R12 都能稳定命中 `testclaw-cli`
-- R3-R12 不再退回“请先配置地址 / 登录 TestClaw”
-- R3-R12 优先落到 `testclaw-cli` 命令，而不是 shell/web/Computer Use
-- R3-R12 涉及真实设备时，未获得用户指定或确认前只能执行设备查询，不能占用或准备调试
-- R10-R12 强制校验证据链：录屏、日志、抓包、截图、性能数据
-- R13 不应被 `testclaw-cli` 抢占
+- R1-R13 都能稳定命中 `testclaw-cli`
+- R3-R13 不再退回“请先配置地址 / 登录 TestClaw”
+- R3-R13 优先落到 `testclaw-cli` 命令，而不是 shell/web/Computer Use
+- R3-R13 涉及真实设备时，未获得用户指定或确认前只能执行设备查询，不能占用或准备调试
+- R10-R13 强制校验证据链：录屏、日志、抓包、截图、性能数据
+- R13 必须在打开浏览器或访问网页前完成 evidence preflight；漏采后只能报告证据不完整，不能补录伪装完整报告
+- R14 不应被 `testclaw-cli` 抢占
 
 ## 建议执行顺序
 

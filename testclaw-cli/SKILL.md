@@ -23,6 +23,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 - 创建模块、测试用例、步骤、测试套件
 - 自动触发测试套件执行并查询结果
 - 使用 TestClaw 真机做 APK/App 冒烟验证、UI 校对、页面巡检、截图取证
+- 使用真实设备打开浏览器、访问网页、读取页面内容、截图确认或做任何页面观察
 - 执行任何 TestClaw case、suite 或 testclaw-cli 手工冒烟任务
 
 如果用户要做的是部署、线上排障、代码与部署比对、服务存活检查，这些属于运维与排障任务，不属于本 skill 的主路径。
@@ -34,9 +35,10 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 3. 如果是业务类，默认直接优先使用 `testclaw-cli` 完成，不要先退回 web、Computer Use 或泛化建议。
 4. 业务执行前先观察当前项目、设备、套件状态，避免盲目创建重复资产。
 5. 涉及设备时，先列出候选设备；除非用户已明确指定设备或确认自动选择，否则不得占用、准备调试或执行应用操作。
-6. 涉及自动化测试时，所有 case 都必须遵守统一 evidence workflow。
-7. 执行套件后，轮询结果直到完成、失败或明确阻塞。
-8. 无论成功或失败，结束时都释放设备，或明确说明无法释放的原因。
+6. 涉及任何真实设备操作时，先读取并执行 `references/evidence-workflow.md`；证据采集启动完成前，不得打开应用、打开浏览器、访问网页、截图、点击、输入或读取页面内容。
+7. 涉及自动化测试时，所有 case 都必须遵守统一 evidence workflow。
+8. 执行套件后，轮询结果直到完成、失败或明确阻塞。
+9. 无论成功或失败，结束时都先停止并归档证据，再释放设备，或明确说明无法释放的原因。
 
 能力边界：
 
@@ -66,8 +68,13 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 - 涉及执行结果时，要明确记录 `resultId`、最终状态、失败原因。
 - 如果设备处于 `DEBUGGING`、`TESTING`、`ERROR` 等非空闲状态，先判断能否释放，再继续执行。
 - `testclaw login` 的浏览器授权默认应对接 TestClaw Server OAuth。
-- 所有 TestClaw case、suite、testclaw-cli 手工冒烟和平台执行任务都必须采集完整 evidence workflow：全程录屏、全程日志、全程网络抓包、关键节点截图、性能数据和结构化报告。
-- evidence workflow 不允许降级。缺少 MP4、完整日志、pcap/代理日志、关键截图或性能数据中的任一项时，不能交付为“完整自动化测试报告”，必须标注阻塞或证据不完整。
+- 证据采集硬闸门：
+  - 所有 TestClaw case、suite、testclaw-cli 手工冒烟、平台执行任务、真机页面巡检、浏览器打开网页、截图取证和 UI 校对，都必须采集完整 evidence workflow：全程录屏、全程日志、全程网络抓包、关键节点截图、性能数据和结构化报告。
+  - 用户说“打开网页看看”“加载某个页面并总结”“截个图确认”“简单看一下设备页面”也属于真实设备手工冒烟；只要会接触设备 UI，就必须先启动 evidence workflow。
+  - 在执行任何会改变或观察设备 UI 的命令前，必须先完成 evidence preflight：创建本次 artifacts 目录、启动录屏、清空或标记 logcat 起点、启动网络抓包或写明可用网络记录方式、采集基线截图、采集基线前台 Activity/性能信息。
+  - evidence preflight 任一项失败时，必须暂停设备操作并报告阻塞；除非用户明确说“本次不需要证据，只做临时观察”，否则不得继续。
+  - evidence workflow 不允许事后补录。漏启动录屏、日志或网络记录后，不能把后续截图包装成完整验证；必须标注“证据不完整”，并建议重跑。
+  - 最终回复必须列出 `video`、`log`、`network`、`screenshots`、`performance`、`structured report` 六类证据路径或缺失原因。
 
 ## 业务意图与命令映射
 
@@ -101,7 +108,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
   - 典型表达：`执行用例`、`跑套件`、`查执行结果`
   - 优先命令：`testclaw --json suite run`、`testclaw --json result get`
 - APK/App 自动化测试、冒烟验证、UI 校对
-  - 典型表达：`自动化测试这个 APK`、`真机验一下`、`做 UI 校对`
+  - 典型表达：`自动化测试这个 APK`、`真机验一下`、`做 UI 校对`、`打开浏览器加载网页并总结`
   - 默认流程：先找可复用 suite；没有 suite 时进入 testclaw-cli 手工冒烟模式；两种模式都必须完整采集 evidence workflow。
 
 如果请求里同时出现 “TestClaw + 业务动作”，不要只回答说明，必须优先尝试命令执行。
@@ -121,9 +128,10 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 1. 确认当前环境是否可直接执行 `testclaw`。
 2. 能执行时优先走 `testclaw-cli`。
 3. 根据用户意图选择对应命令；涉及真实设备时先列候选并等待用户指定或确认。
-4. 自动化测试类任务必须读取 `references/evidence-workflow.md`。
-5. 优先真实执行，不要退化为泛泛说明。
-6. 结束后输出结果、证据和资源释放状态。
+4. 只要后续会操作或观察真实设备 UI，必须读取 `references/evidence-workflow.md`，并在启动被测对象前完成 evidence preflight。
+5. evidence preflight 完成后再优先真实执行，不要退化为泛泛说明。
+6. 结束后先停止/拉取/归档证据，再释放设备。
+7. 输出结果、六类证据路径或缺失原因、资源释放状态。
 
 ## 成功判定
 
@@ -150,6 +158,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 7. 应用安装或启动是否失败
 8. 套件执行失败是在 TestClaw 编排层还是设备执行层
 9. evidence workflow 是否完整；缺任一证据产物时，按证据不完整处理
+10. 如果已经操作了真实设备但没有提前启动录屏、日志或网络记录，应立即停止继续扩大操作，说明本轮证据不完整，并请求重跑以重新采集完整证据。
 
 ## 常见误匹配根因
 
@@ -161,6 +170,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 4. 可执行 CLI 时仍错误退回 `adb`、web、Computer Use 或纯文本建议
 5. 只会解释能力，不会直接执行业务命令
 6. 把 evidence workflow 当作可选项或兼容降级项
+7. 把“打开浏览器/网页、截图确认、页面内容总结”误判为轻量查询，导致绕过手工冒烟 evidence preflight
 
 ## 参考资料
 
