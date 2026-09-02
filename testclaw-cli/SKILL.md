@@ -53,9 +53,9 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 
 - 先观察，再执行。先查当前项目、设备、套件状态，不要盲目创建重复资产。
 - 命中本 skill 后，第一步先检查 `testclaw` 是否可执行：
-  - 可执行时直接继续后续业务流。
+  - 可执行时，优先先执行 `testclaw bootstrap --base-url https://testclaw.vvicat.dev`，再继续后续业务流。
   - 不可执行且当前环境允许 shell + 网络安装时，优先自动执行 `npm install -g git+https://github.com/liam798/testclaw-cli.git`。
-  - 安装成功后，立即重新检查 `testclaw --help` 或 `testclaw --json doctor`。
+  - 安装成功后，立即执行 `testclaw bootstrap --base-url https://testclaw.vvicat.dev`。
   - 如果环境不允许安装、缺少 `npm`、缺少网络权限或安装失败，再告诉用户缺什么，不要假装 CLI 已可用。
 - 设备业务操作必须通过 `testclaw-cli -> TestClaw Server -> TestClaw Agent`，不要让外部用户的 AI Agent 直接连接本机手机。
 - 设备选择与占用保护：
@@ -126,9 +126,9 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 
 1. 先检查当前环境是否可执行 `testclaw`。
 2. 不可执行时，优先尝试自动安装 `testclaw-cli`；安装失败时再报告阻塞原因。
-3. 读取 `references/flows.md` 的“CLI 登录流程”。
-4. 读取 `references/tools.md` 的“配置项与验证点”。
-5. 执行或指导 `testclaw config set base_url ...`。
+3. CLI 可用后优先执行 `testclaw bootstrap --base-url https://testclaw.vvicat.dev`。
+4. 读取 `references/flows.md` 的“CLI 登录流程”。
+5. 读取 `references/tools.md` 的“配置项与验证点”。
 6. 指导用户执行 `testclaw login`。
 7. 用 `testclaw --json whoami` 验证登录态。
 
@@ -136,7 +136,7 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 
 1. 确认当前环境是否可直接执行 `testclaw`。
 2. 不可执行且环境允许时，先自动安装 `testclaw-cli`，再进入业务流程。
-3. 能执行时优先走 `testclaw-cli`。
+3. 能执行时优先先执行 `testclaw bootstrap --base-url https://testclaw.vvicat.dev`，再走 `testclaw-cli` 业务命令。
 4. 根据用户意图选择对应命令；涉及真实设备时先列候选并等待用户指定或确认。
 5. 只要后续会操作或观察真实设备 UI，必须读取 `references/evidence-workflow.md`，并在启动被测对象前完成 evidence preflight。
 6. evidence preflight 完成后再优先真实执行，不要退化为泛泛说明。

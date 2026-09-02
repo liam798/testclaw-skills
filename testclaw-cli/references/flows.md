@@ -32,7 +32,7 @@ npm install -g git+https://github.com/liam798/testclaw-cli.git
 
 ```bash
 testclaw --help
-testclaw --json doctor
+testclaw bootstrap --base-url https://testclaw.vvicat.dev
 ```
 
 ### 4. 再进入配置与登录
@@ -40,7 +40,7 @@ testclaw --json doctor
 CLI 可用后，再继续：
 
 ```bash
-testclaw config set base_url https://testclaw.vvicat.dev
+testclaw bootstrap --base-url https://testclaw.vvicat.dev
 testclaw login
 testclaw --json whoami
 ```
