@@ -1,5 +1,61 @@
 # 使用 TestClaw 流程
 
+## CLI 自举安装流程
+
+适用于“用户已命中 TestClaw skill，但当前环境还没有安装 `testclaw-cli`”。
+
+### 1. 先检查 CLI 是否存在
+
+优先检查：
+
+```bash
+command -v testclaw
+```
+
+如果已经存在，再执行：
+
+```bash
+testclaw --json doctor
+```
+
+### 2. 缺失时自动安装 CLI
+
+如果 `testclaw` 不存在，且当前 Agent 环境允许运行 shell、联网并安装全局 npm 包，优先执行：
+
+```bash
+npm install -g git+https://github.com/liam798/testclaw-cli.git
+```
+
+### 3. 安装后立即回检
+
+安装成功后至少验证：
+
+```bash
+testclaw --help
+testclaw --json doctor
+```
+
+### 4. 再进入配置与登录
+
+CLI 可用后，再继续：
+
+```bash
+testclaw config set base_url https://testclaw.vvicat.dev
+testclaw login
+testclaw --json whoami
+```
+
+### 5. 无法自动安装时的处理
+
+如果遇到下面任一情况，不要假装 CLI 已就绪：
+
+- 没有 `npm`
+- 没有网络权限
+- 当前 Agent 禁止执行安装命令
+- 全局安装失败
+
+此时要明确告诉用户阻塞点，并给出最短补救命令。
+
 ## CLI 登录流程
 
 适用于“用户需要通过 `testclaw-cli` 连接 TestClaw Server 并完成浏览器 OAuth 登录”。
@@ -20,7 +76,7 @@ https://testclaw.dev.ad2.cc
 优先执行：
 
 ```bash
-testclaw config set base_url https://testclaw.dev.ad2.cc
+testclaw config set base_url https://testclaw.vvicat.dev
 ```
 
 配置后检查：

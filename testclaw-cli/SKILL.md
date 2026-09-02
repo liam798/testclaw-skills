@@ -31,18 +31,20 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 ## 核心工作流
 
 1. 先判断当前任务属于“登录配置类”还是“业务类”。
-2. 如果是登录配置类，先确认 TestClaw Server 地址，再配置 `testclaw-cli` 并指导或执行 `testclaw login`。
-3. 如果是业务类，默认直接优先使用 `testclaw-cli` 完成，不要先退回 web、Computer Use 或泛化建议。
-4. 业务执行前先观察当前项目、设备、套件状态，避免盲目创建重复资产。
-5. 涉及设备时，先列出候选设备；除非用户已明确指定设备或确认自动选择，否则不得占用、准备调试或执行应用操作。
-6. 涉及任何真实设备操作时，先读取并执行 `references/evidence-workflow.md`；证据采集启动完成前，不得打开应用、打开浏览器、访问网页、截图、点击、输入或读取页面内容。
-7. 涉及自动化测试时，所有 case 都必须遵守统一 evidence workflow。
-8. 执行套件后，轮询结果直到完成、失败或明确阻塞。
-9. 无论成功或失败，结束时都先停止并归档证据，再释放设备，或明确说明无法释放的原因。
+2. 先检查当前环境是否可直接执行 `testclaw`；若不可执行，优先进入 CLI 自举安装流程。
+3. 如果是登录配置类，先确认 TestClaw Server 地址，再配置 `testclaw-cli` 并指导或执行 `testclaw login`。
+4. 如果是业务类，默认直接优先使用 `testclaw-cli` 完成，不要先退回 web、Computer Use 或泛化建议。
+5. 业务执行前先观察当前项目、设备、套件状态，避免盲目创建重复资产。
+6. 涉及设备时，先列出候选设备；除非用户已明确指定设备或确认自动选择，否则不得占用、准备调试或执行应用操作。
+7. 涉及任何真实设备操作时，先读取并执行 `references/evidence-workflow.md`；证据采集启动完成前，不得打开应用、打开浏览器、访问网页、截图、点击、输入或读取页面内容。
+8. 涉及自动化测试时，所有 case 都必须遵守统一 evidence workflow。
+9. 执行套件后，轮询结果直到完成、失败或明确阻塞。
+10. 无论成功或失败，结束时都先停止并归档证据，再释放设备，或明确说明无法释放的原因。
 
 能力边界：
 
 - 可以自动执行 `testclaw` 命令和读取其输出。
+- 在当前 Agent 允许运行 shell、联网并安装 Node 包时，可以自动补装 `testclaw-cli`。
 - 可以指导用户完成浏览器 OAuth 登录。
 - 不能替用户完成需要浏览器授权确认的登录动作。
 - 不要把 TestClaw 业务请求泛化成“测试建议”；能执行时优先真实执行。
@@ -50,6 +52,11 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 ## 强制约束
 
 - 先观察，再执行。先查当前项目、设备、套件状态，不要盲目创建重复资产。
+- 命中本 skill 后，第一步先检查 `testclaw` 是否可执行：
+  - 可执行时直接继续后续业务流。
+  - 不可执行且当前环境允许 shell + 网络安装时，优先自动执行 `npm install -g git+https://github.com/liam798/testclaw-cli.git`。
+  - 安装成功后，立即重新检查 `testclaw --help` 或 `testclaw --json doctor`。
+  - 如果环境不允许安装、缺少 `npm`、缺少网络权限或安装失败，再告诉用户缺什么，不要假装 CLI 已可用。
 - 设备业务操作必须通过 `testclaw-cli -> TestClaw Server -> TestClaw Agent`，不要让外部用户的 AI Agent 直接连接本机手机。
 - 设备选择与占用保护：
   - 任何需要真实设备的任务，都必须先执行 `testclaw --json device list`，并把可用候选设备列给用户。
@@ -117,21 +124,24 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 
 登录配置类任务：
 
-1. 读取 `references/flows.md` 的“CLI 登录流程”。
-2. 读取 `references/tools.md` 的“配置项与验证点”。
-3. 执行或指导 `testclaw config set base_url ...`。
-4. 指导用户执行 `testclaw login`。
-5. 用 `testclaw --json whoami` 验证登录态。
+1. 先检查当前环境是否可执行 `testclaw`。
+2. 不可执行时，优先尝试自动安装 `testclaw-cli`；安装失败时再报告阻塞原因。
+3. 读取 `references/flows.md` 的“CLI 登录流程”。
+4. 读取 `references/tools.md` 的“配置项与验证点”。
+5. 执行或指导 `testclaw config set base_url ...`。
+6. 指导用户执行 `testclaw login`。
+7. 用 `testclaw --json whoami` 验证登录态。
 
 业务类任务：
 
 1. 确认当前环境是否可直接执行 `testclaw`。
-2. 能执行时优先走 `testclaw-cli`。
-3. 根据用户意图选择对应命令；涉及真实设备时先列候选并等待用户指定或确认。
-4. 只要后续会操作或观察真实设备 UI，必须读取 `references/evidence-workflow.md`，并在启动被测对象前完成 evidence preflight。
-5. evidence preflight 完成后再优先真实执行，不要退化为泛泛说明。
-6. 结束后先停止/拉取/归档证据，再释放设备。
-7. 输出结果、六类证据路径或缺失原因、资源释放状态。
+2. 不可执行且环境允许时，先自动安装 `testclaw-cli`，再进入业务流程。
+3. 能执行时优先走 `testclaw-cli`。
+4. 根据用户意图选择对应命令；涉及真实设备时先列候选并等待用户指定或确认。
+5. 只要后续会操作或观察真实设备 UI，必须读取 `references/evidence-workflow.md`，并在启动被测对象前完成 evidence preflight。
+6. evidence preflight 完成后再优先真实执行，不要退化为泛泛说明。
+7. 结束后先停止/拉取/归档证据，再释放设备。
+8. 输出结果、六类证据路径或缺失原因、资源释放状态。
 
 ## 成功判定
 
@@ -150,15 +160,16 @@ description: 通过 testclaw-cli 使用 TestClaw 平台完成设备、应用、�
 优先按下面顺序定位：
 
 1. `testclaw` 是否可执行
-2. TestClaw Server 地址是否正确
-3. TestClaw 登录是否成功
-4. 项目、设备、套件数据是否存在
-5. 设备是否可占用
-6. Android 调试是否准备完成
-7. 应用安装或启动是否失败
-8. 套件执行失败是在 TestClaw 编排层还是设备执行层
-9. evidence workflow 是否完整；缺任一证据产物时，按证据不完整处理
-10. 如果已经操作了真实设备但没有提前启动录屏、日志或网络记录，应立即停止继续扩大操作，说明本轮证据不完整，并请求重跑以重新采集完整证据。
+2. 如果不可执行，当前环境是否允许自动安装 CLI，`npm` 和网络是否可用
+3. TestClaw Server 地址是否正确
+4. TestClaw 登录是否成功
+5. 项目、设备、套件数据是否存在
+6. 设备是否可占用
+7. Android 调试是否准备完成
+8. 应用安装或启动是否失败
+9. 套件执行失败是在 TestClaw 编排层还是设备执行层
+10. evidence workflow 是否完整；缺任一证据产物时，按证据不完整处理
+11. 如果已经操作了真实设备但没有提前启动录屏、日志或网络记录，应立即停止继续扩大操作，说明本轮证据不完整，并请求重跑以重新采集完整证据。
 
 ## 常见误匹配根因
 

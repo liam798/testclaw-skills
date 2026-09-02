@@ -15,6 +15,13 @@
 
 ## CLI 配置
 
+如果当前环境尚未安装 `testclaw-cli`，优先自举安装：
+
+```bash
+command -v testclaw
+npm install -g git+https://github.com/liam798/testclaw-cli.git
+```
+
 检查环境：
 
 ```bash
@@ -24,7 +31,7 @@ testclaw --json doctor
 设置服务地址：
 
 ```bash
-testclaw config set base_url https://testclaw.dev.ad2.cc
+testclaw config set base_url https://testclaw.vvicat.dev
 ```
 
 登录：
