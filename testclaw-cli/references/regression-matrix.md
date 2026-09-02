@@ -1,4 +1,4 @@
-# Using TestClaw 召回验收矩阵
+# TestClaw 召回验收矩阵
 
 ## 验收目标
 
